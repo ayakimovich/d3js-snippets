@@ -58,70 +58,20 @@ NB: relies on a working internet connection for the libraries.
   WBhTJCWxg+XJqOEo2IdVeBTWtJV1uqtDXogLxmQkpbGwujMMmAh5EStxvR6BvwMAzYYNeIWwSOMAAAAASUVORK5CYII="/>
 
   <script src="http://d3js.org/d3.v3.min.js" type="text/javascript"></script>
-  <style>
-  body {
-    margin: 50;
-  }
-  </style>
-</head>
-<body onload="uViewer()">
-  <div>
-    <svg>
-      <g id="bigRGBImageGroup">
-        <image id="bigRGBImage">
-      </g>
-      <g>
-        <clipPath id="clipPathRed">
-          <rect id="clipRed"/>
-        </clipPath>
-          <image id="redImage" clip-path="url(#clipPathRed)">
-      </g>
-      <g>
-        <rect id="clipRedFrame"/>
-      </g>
 
-      <g>
-        <clipPath id="clipPathGreen">
-          <rect id="clipGreen"/>
-        </clipPath>
-          <image id="greenImage" clip-path="url(#clipPathGreen)">
-      </g>
-      <g>
-        <rect id="clipGreenFrame"/>
-      </g>
-
-      <g>
-        <clipPath id="clipPathBlue">
-          <rect id="clipBlue"/>
-        </clipPath>
-          <image id="blueImage" clip-path="url(#clipPathBlue)">
-      </g>
-      <g>
-        <rect id="clipBlueFrame"/>
-      </g>
-
-      <g>
-        <clipPath id="clipPathGray">
-          <rect id="clipGray"/>
-        </clipPath>
-          <image id="grayImage" clip-path="url(#clipPathGray)">
-      </g>
-      <g>
-        <rect id="clipGrayFrame"/>
-      </g>
-
-    </svg>
-  </div>
-</body>
-<footer>
   <script type="text/javascript">
     function uViewer() {
       console.log("uViewer start")
       var svgWidth = 800,
           svgHeight = 600,
           r = 0,
-          imagePadding = 5;
-          imageFolder = "/Users/ayakimovich/data/141216/D04/png/";
+          imagePadding = 5,
+          imageFolder = "/Users/ayakimovich/github/d3js-snippets/png/",
+          rgbImageFileName = "RGB.png",
+          redImageFileName = "D06-D05-D04_Maximum-0003.png",
+          greenImageFileName = "D06-D05-D04_Maximum-0002.png",
+          blueImageFileName = "D06-D05-D04_Maximum-0001.png",
+          grayImageFileName = "D06-D05-D04_Maximum-0004.png";
 
       var padding = 10;
 
@@ -135,7 +85,7 @@ NB: relies on a working internet connection for the libraries.
           rgbZoomPaneWidth = 80,
           rgbZoomPaneHeight = 80,
           rgbZoomPaneX = rgbWidth - imagePadding - rgbZoomPaneWidth,
-          rgbZoomPaneY = rgbZoomPaneHeight + imagePadding,
+          rgbZoomPaneY = rgbY + imagePadding*2,
           redZoomPaneX = rgbWidth + imagePadding*2,
           redZoomPaneY = imagePadding + Math.floor(imagePadding/2),
           greenZoomPaneX = redZoomPaneX + imagePadding + zoomPaneWidth,
@@ -146,7 +96,7 @@ NB: relies on a working internet connection for the libraries.
           grayZoomPaneY = blueZoomPaneY;
 
       //to be able to compute dimensions we will load the rgb png
-      var imageURL = imageFolder+"RGB.png",
+      var imageURL = imageFolder+rgbImageFileName,
         img = new Image();
         img.src = imageURL;
 
@@ -161,7 +111,37 @@ NB: relies on a working internet connection for the libraries.
           "x" : rgbX,
           "y" : rgbY,
         })
-        .attr("xlink:href", imageFolder+"RGB.png");
+        .attr("xlink:href", imageFolder+rgbImageFileName);
+  // rgb pane
+      d3.select("#clipRGB")
+        .attr({
+        "height": rgbZoomPaneHeight,
+        "width": rgbZoomPaneWidth,
+        "x" : rgbZoomPaneX,
+        "y" : rgbZoomPaneY
+        });
+      d3.select("#clipRGBFrame")
+        .attr({
+        "height": rgbZoomPaneHeight,
+        "width": rgbZoomPaneWidth,
+        "x" : rgbZoomPaneX,
+        "y" : rgbZoomPaneY,
+        "fill-opacity": 0,
+        "fill": "lightgray",
+        "stroke": "lightgray",
+        "stroke-width": imagePadding,
+        "stroke-opacity": 0.5
+        });
+
+      var clipRGBImage = d3.select("#clipRGBImage")
+        .attr("xlink:href", imageFolder+rgbImageFileName)
+        .attr({
+        "height": img.naturalHeight,
+        "width": img.naturalWidth,
+        "x" : 0,
+        "y" : 0
+        });
+
 // red pane
       d3.select("#clipRed")
         .attr({
@@ -184,7 +164,7 @@ NB: relies on a working internet connection for the libraries.
         });
 
       var redImage = d3.select("#redImage")
-        .attr("xlink:href", imageFolder+"D06-D05-D04_Maximum-0003.png")
+        .attr("xlink:href", imageFolder+redImageFileName)
         .attr({
         "height": img.naturalHeight,
         "width": img.naturalWidth,
@@ -213,7 +193,7 @@ NB: relies on a working internet connection for the libraries.
         });
 
       var greenImage = d3.select("#greenImage")
-        .attr("xlink:href", imageFolder+"D06-D05-D04_Maximum-0002.png")
+        .attr("xlink:href", imageFolder+greenImageFileName)
         .attr({
         "height": img.naturalHeight,
         "width": img.naturalWidth,
@@ -242,7 +222,7 @@ NB: relies on a working internet connection for the libraries.
           });
 
         var blueImage = d3.select("#blueImage")
-          .attr("xlink:href", imageFolder+"D06-D05-D04_Maximum-0001.png")
+          .attr("xlink:href", imageFolder+blueImageFileName)
           .attr({
           "height": img.naturalHeight,
           "width": img.naturalWidth,
@@ -272,7 +252,7 @@ NB: relies on a working internet connection for the libraries.
         });
 
       var grayImage = d3.select("#grayImage")
-        .attr("xlink:href", imageFolder+"D06-D05-D04_Maximum-0004.png")
+        .attr("xlink:href", imageFolder+grayImageFileName)
         .attr({
         "height": img.naturalHeight,
         "width": img.naturalWidth,
@@ -311,10 +291,10 @@ NB: relies on a working internet connection for the libraries.
           .origin(Object)
           .on("drag", bdragresize);
 
-      var newg = svg.select("#bigRGBImageGroup").append("g")
+      var bigRGBImageHandle = svg.select("#bigRGBImageGroup").append("g")
             .data([{x: width / 2, y: height / 2}]);
 
-      var dragrect = newg.append("rect")
+      var dragrect = bigRGBImageHandle.append("rect")
             .attr("id", "active")
             .attr("x", function(d) { return d.x; })
             .attr("y", function(d) { return d.y; })
@@ -322,13 +302,13 @@ NB: relies on a working internet connection for the libraries.
             .attr("width", width)
             .attr("fill-opacity", 0)
             .attr("cursor", "move")
-            .attr("fill", "gray")
-            .attr("stroke","gray")
+            .attr("fill", "lightgray")
+            .attr("stroke","lightgray")
             .attr("stroke-width",rectStrokeWidth)
             .attr("stroke-opacity",0.7)
             .call(drag);
 
-      var dragbarleft = newg.append("rect")
+      var dragbarleft = bigRGBImageHandle.append("rect")
             .attr("x", function(d) { return d.x - (dragBarWidth/2); })
             .attr("y", function(d) { return d.y + (dragBarWidth/2); })
             .attr("height", height - dragBarWidth)
@@ -339,7 +319,7 @@ NB: relies on a working internet connection for the libraries.
             .attr("cursor", "ew-resize")
             .call(dragleft);
 
-      var dragbarright = newg.append("rect")
+      var dragbarright = bigRGBImageHandle.append("rect")
             .attr("x", function(d) { return d.x + width - (dragBarWidth/2); })
             .attr("y", function(d) { return d.y + (dragBarWidth/2); })
             .attr("id", "dragright")
@@ -350,7 +330,7 @@ NB: relies on a working internet connection for the libraries.
             .attr("cursor", "ew-resize")
             .call(dragright);
 
-      var dragbartop = newg.append("rect")
+      var dragbartop = bigRGBImageHandle.append("rect")
             .attr("x", function(d) { return d.x + (dragBarWidth/2); })
             .attr("y", function(d) { return d.y - (dragBarWidth/2); })
             .attr("height", dragBarWidth)
@@ -361,7 +341,7 @@ NB: relies on a working internet connection for the libraries.
             .attr("cursor", "ns-resize")
             .call(dragtop);
 
-      var dragbarbottom = newg.append("rect")
+      var dragbarbottom = bigRGBImageHandle.append("rect")
             .attr("x", function(d) { return d.x + (dragBarWidth/2); })
             .attr("y", function(d) { return d.y + height - (dragBarWidth/2); })
             .attr("id", "dragright")
@@ -407,6 +387,11 @@ NB: relies on a working internet connection for the libraries.
                 .attr("y", function(d) { return d.y + height - (dragBarWidth/2); });
 
             //change clipping mask
+            clipRGBImage
+              .attr("width", zoomScaleNaturalSize(img.naturalWidth, width, rgbWidth))
+              .attr("height", zoomScaleNaturalSize(img.naturalHeight, height, rgbHeight))
+              .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(img.naturalWidth, width, rgbWidth),rgbWidth,rgbZoomPaneX))
+              .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(img.naturalHeight, height, rgbHeight),rgbHeight,rgbZoomPaneY));
             redImage
               .attr("width", zoomScaleNaturalSize(img.naturalWidth, width, rgbWidth))
               .attr("height", zoomScaleNaturalSize(img.naturalHeight, height, rgbHeight))
@@ -427,7 +412,6 @@ NB: relies on a working internet connection for the libraries.
               .attr("height", zoomScaleNaturalSize(img.naturalHeight, height, rgbHeight))
               .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(img.naturalWidth, width, rgbWidth),rgbWidth,grayZoomPaneX))
               .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(img.naturalHeight, height, rgbHeight),rgbHeight,grayZoomPaneY));
-
 
       }
 
@@ -539,6 +523,87 @@ NB: relies on a working internet connection for the libraries.
       }
   //resizable zoom rectangle code end
   }
+  function saveImage(){
+    //var url = imageFolder+"D06-D05-D04_Maximum-0002.svg";
+    console.log("Button Pressed");
+    var svg = d3.select("body").select("svg")
+          .attr("width", svgWidth)
+          .attr("height", svgHeight);
+    //svg.attr("src", url);
+    //Plotly.toImage(gd,{format:'svg',height:800,width:800});
+  }
   </script>
-</footer>
+
+
+  <style>
+  body {
+    margin: 50;
+  }
+  </style>
+</head>
+<body onload="uViewer()">
+  <div>
+    <svg>
+      <g id="bigRGBImageGroup">
+        <image id="bigRGBImage">
+      </g>
+      <g>
+        <clipPath id="clipPathRGB">
+          <rect id="clipRGB"/>
+        </clipPath>
+          <image id="clipRGBImage" clip-path="url(#clipPathRGB)">
+      </g>
+      <g>
+        <rect id="clipRGBFrame"/>
+      </g>
+      <g>
+        <clipPath id="clipPathRed">
+          <rect id="clipRed"/>
+        </clipPath>
+          <image id="redImage" clip-path="url(#clipPathRed)">
+      </g>
+      <g>
+        <rect id="clipRedFrame"/>
+      </g>
+
+      <g>
+        <clipPath id="clipPathGreen">
+          <rect id="clipGreen"/>
+        </clipPath>
+          <image id="greenImage" clip-path="url(#clipPathGreen)">
+      </g>
+      <g>
+        <rect id="clipGreenFrame"/>
+      </g>
+
+      <g>
+        <clipPath id="clipPathBlue">
+          <rect id="clipBlue"/>
+        </clipPath>
+          <image id="blueImage" clip-path="url(#clipPathBlue)">
+      </g>
+      <g>
+        <rect id="clipBlueFrame"/>
+      </g>
+
+      <g>
+        <clipPath id="clipPathGray">
+          <rect id="clipGray"/>
+        </clipPath>
+          <image id="grayImage" clip-path="url(#clipPathGray)">
+      </g>
+      <g>
+        <rect id="clipGrayFrame"/>
+      </g>
+
+    </svg>
+  </div>
+  <div id="saveButtonDiv">
+    <br><br>
+        <input name="saveButton"
+           type="button"
+           value="Save Image"
+           onclick="saveImage()" />
+  </div>
+</body>
 </html>
