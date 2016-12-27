@@ -526,9 +526,19 @@ NB: relies on a working internet connection for the libraries.
   function saveImage(){
     //var url = imageFolder+"D06-D05-D04_Maximum-0002.svg";
     console.log("Button Pressed");
-    var svg = d3.select("body").select("svg")
-          .attr("width", svgWidth)
-          .attr("height", svgHeight);
+
+    var html = d3.select("body").select("svg")
+        .attr("title", "uViewer.js_render.svg")
+        .attr("version", 1.1)
+        .attr("xmlns", "http://www.w3.org/2000/svg")
+        .node().parentNode.innerHTML;
+
+    d3.select("body").append("div")
+        .attr("id", "download")
+        .append("a")
+        .html("Click here to download svg file")
+        .attr("href", "data:image/svg+xml;base64,"+ btoa(html))
+        .attr("download", "svg_figure");
     //svg.attr("src", url);
     //Plotly.toImage(gd,{format:'svg',height:800,width:800});
   }
@@ -604,6 +614,7 @@ NB: relies on a working internet connection for the libraries.
            type="button"
            value="Save Image"
            onclick="saveImage()" />
+           <p>Todo:<br>-Fix double zoom bug<br>-Save PDF from svg<br>-Scale bar<br>-Responsive Grid</p>
   </div>
 </body>
 </html>
