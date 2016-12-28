@@ -58,473 +58,527 @@ NB: relies on a working internet connection for the libraries.
   WBhTJCWxg+XJqOEo2IdVeBTWtJV1uqtDXogLxmQkpbGwujMMmAh5EStxvR6BvwMAzYYNeIWwSOMAAAAASUVORK5CYII="/>
 
   <script src="http://d3js.org/d3.v3.min.js" type="text/javascript"></script>
-
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script type="text/javascript">
     function uViewer() {
-      console.log("uViewer start")
-      var svgWidth = 800,
-          svgHeight = 600,
-          r = 0,
-          imagePadding = 5,
-          imageFolder = "/Users/ayakimovich/github/d3js-snippets/png/",
-          rgbImageFileName = "RGB.png",
-          redImageFileName = "D06-D05-D04_Maximum-0003.png",
-          greenImageFileName = "D06-D05-D04_Maximum-0002.png",
-          blueImageFileName = "D06-D05-D04_Maximum-0001.png",
-          grayImageFileName = "D06-D05-D04_Maximum-0004.png";
+      var   imageFolder = "/Users/ayakimovich/github/d3js-snippets/png/",
+            rgbImageFileName = "RGB.png",
+            redImageFileName = "D06-D05-D04_Maximum-0003.png",
+            greenImageFileName = "D06-D05-D04_Maximum-0002.png",
+            blueImageFileName = "D06-D05-D04_Maximum-0001.png",
+            grayImageFileName = "D06-D05-D04_Maximum-0004.png";
 
-      var padding = 10;
+      function imagePreload(src) {
+          var img = new Image();
+          img.src = src;
+          return img
+      }
 
-      var rgbWidth = 300,
-        rgbHeight = 300,
-        rgbX = 5,
-        rgbY = 5;
+      function mainSVG(rgbImage, redImage, greenImage, blueImage, grayImage){
+              //main svg start
+              console.log("uViewer start")
+              var svgWidth = 800,
+                  svgHeight = 600,
+                  r = 0,
+                  imagePadding = 5,
+                  scaleBarSize = 20,
+                  micronPixelRatio = 31.015,
+                  scaleBarHeight = 5,
+                  rgbWidth = 300,
+                  rgbHeight = 300,
+                  rgbX = 5,
+                  rgbY = 5;
 
-      var zoomPaneWidth = rgbWidth/2 - imagePadding,
-          zoomPaneHeight = rgbHeight/2 - imagePadding,
-          rgbZoomPaneWidth = 80,
-          rgbZoomPaneHeight = 80,
-          rgbZoomPaneX = rgbWidth - imagePadding - rgbZoomPaneWidth,
-          rgbZoomPaneY = rgbY + imagePadding*2,
-          redZoomPaneX = rgbWidth + imagePadding*2,
-          redZoomPaneY = imagePadding + Math.floor(imagePadding/2),
-          greenZoomPaneX = redZoomPaneX + imagePadding + zoomPaneWidth,
-          greenZoomPaneY = imagePadding + Math.floor(imagePadding/2),
-          blueZoomPaneX = redZoomPaneX,
-          blueZoomPaneY = zoomPaneHeight + imagePadding*2 + Math.floor(imagePadding/2),
-          grayZoomPaneX = redZoomPaneX + imagePadding + zoomPaneWidth,
-          grayZoomPaneY = blueZoomPaneY;
+              var zoomPaneWidth = rgbWidth/2 - imagePadding,
+                  zoomPaneHeight = rgbHeight/2 - imagePadding,
+                  scaleBarX = imagePadding*2,
+                  scaleBarY = rgbHeight - imagePadding - scaleBarHeight,
+                  rgbZoomPaneWidth = 80,
+                  rgbZoomPaneHeight = 80,
+                  rgbZoomPaneX = rgbWidth - imagePadding - rgbZoomPaneWidth,
+                  rgbZoomPaneY = rgbY + imagePadding*2,
+                  redZoomPaneX = rgbWidth + imagePadding*2,
+                  redZoomPaneY = imagePadding + Math.floor(imagePadding/2),
+                  greenZoomPaneX = redZoomPaneX + imagePadding + zoomPaneWidth,
+                  greenZoomPaneY = imagePadding + Math.floor(imagePadding/2),
+                  blueZoomPaneX = redZoomPaneX,
+                  blueZoomPaneY = zoomPaneHeight + imagePadding*2 + Math.floor(imagePadding/2),
+                  grayZoomPaneX = redZoomPaneX + imagePadding + zoomPaneWidth,
+                  grayZoomPaneY = blueZoomPaneY;
 
-      //to be able to compute dimensions we will load the rgb png
-      var imageURL = imageFolder+rgbImageFileName,
-        img = new Image();
-        img.src = imageURL;
+              var svg = d3.select("body").select("svg")
+                    .attr("width", svgWidth)
+                    .attr("height", svgHeight);
+              //update parameters
+              d3.select("#bigRGBImage")
+                .attr({
+                  "height": rgbHeight,
+                  "width": rgbWidth,
+                  "x" : rgbX,
+                  "y" : rgbY,
+                })
+                .attr("xlink:href", rgbImage.src);
+          // rgb pane
+              d3.select("#clipRGB")
+                .attr({
+                "height": rgbZoomPaneHeight,
+                "width": rgbZoomPaneWidth,
+                "x" : rgbZoomPaneX,
+                "y" : rgbZoomPaneY
+                });
+              d3.select("#clipRGBFrame")
+                .attr({
+                "height": rgbZoomPaneHeight,
+                "width": rgbZoomPaneWidth,
+                "x" : rgbZoomPaneX,
+                "y" : rgbZoomPaneY,
+                "fill-opacity": 0,
+                "fill": "lightgray",
+                "stroke": "lightgray",
+                "stroke-width": imagePadding,
+                "stroke-opacity": 0.5
+                });
 
-      var svg = d3.select("body").select("svg")
-            .attr("width", svgWidth)
-            .attr("height", svgHeight);
-      //update parameters
-      d3.select("#bigRGBImage")
-        .attr({
-          "height": rgbHeight,
-          "width": rgbWidth,
-          "x" : rgbX,
-          "y" : rgbY,
-        })
-        .attr("xlink:href", imageFolder+rgbImageFileName);
-  // rgb pane
-      d3.select("#clipRGB")
-        .attr({
-        "height": rgbZoomPaneHeight,
-        "width": rgbZoomPaneWidth,
-        "x" : rgbZoomPaneX,
-        "y" : rgbZoomPaneY
-        });
-      d3.select("#clipRGBFrame")
-        .attr({
-        "height": rgbZoomPaneHeight,
-        "width": rgbZoomPaneWidth,
-        "x" : rgbZoomPaneX,
-        "y" : rgbZoomPaneY,
-        "fill-opacity": 0,
-        "fill": "lightgray",
-        "stroke": "lightgray",
-        "stroke-width": imagePadding,
-        "stroke-opacity": 0.5
-        });
+              var clipRGBImage = d3.select("#clipRGBImage")
+                .attr("xlink:href", rgbImage.src)
+                .attr({
+                "height": rgbImage.naturalHeight,
+                "width": rgbImage.naturalWidth,
+                "x" : 0,
+                "y" : 0
+                });
 
-      var clipRGBImage = d3.select("#clipRGBImage")
-        .attr("xlink:href", imageFolder+rgbImageFileName)
-        .attr({
-        "height": img.naturalHeight,
-        "width": img.naturalWidth,
-        "x" : 0,
-        "y" : 0
-        });
+        // red pane
+              d3.select("#clipRed")
+                .attr({
+                "height": zoomPaneHeight,
+                "width": zoomPaneWidth,
+                "x" : redZoomPaneX,
+                "y" : redZoomPaneY
+                });
+              d3.select("#clipRedFrame")
+                .attr({
+                "height": zoomPaneHeight,
+                "width": zoomPaneWidth,
+                "x" : redZoomPaneX,
+                "y" : redZoomPaneY,
+                "fill-opacity": 0,
+                "fill": "gray",
+                "stroke": "red",
+                "stroke-width": imagePadding,
+                "stroke-opacity": 0.5
+                });
 
-// red pane
-      d3.select("#clipRed")
-        .attr({
-        "height": zoomPaneHeight,
-        "width": zoomPaneWidth,
-        "x" : redZoomPaneX,
-        "y" : redZoomPaneY
-        });
-      d3.select("#clipRedFrame")
-        .attr({
-        "height": zoomPaneHeight,
-        "width": zoomPaneWidth,
-        "x" : redZoomPaneX,
-        "y" : redZoomPaneY,
-        "fill-opacity": 0,
-        "fill": "gray",
-        "stroke": "red",
-        "stroke-width": imagePadding,
-        "stroke-opacity": 0.5
-        });
+              var redImage = d3.select("#redImage")
+                .attr("xlink:href", redImage.src)
+                .attr({
+                "height": rgbImage.naturalHeight,
+                "width": rgbImage.naturalWidth,
+                "x" : 0,
+                "y" : 0
+                });
+        //green pane
+              d3.select("#clipGreen")
+                .attr({
+                "height": zoomPaneHeight,
+                "width": zoomPaneWidth,
+                "x" : greenZoomPaneX,
+                "y" : greenZoomPaneY
+                });
+              d3.select("#clipGreenFrame")
+                .attr({
+                "height": zoomPaneHeight,
+                "width": zoomPaneWidth,
+                "x" : greenZoomPaneX,
+                "y" : greenZoomPaneY,
+                "fill-opacity": 0,
+                "fill": "gray",
+                "stroke": "green",
+                "stroke-width": imagePadding,
+                "stroke-opacity": 0.5
+                });
 
-      var redImage = d3.select("#redImage")
-        .attr("xlink:href", imageFolder+redImageFileName)
-        .attr({
-        "height": img.naturalHeight,
-        "width": img.naturalWidth,
-        "x" : 0,
-        "y" : 0
-        });
-//green pane
-      d3.select("#clipGreen")
-        .attr({
-        "height": zoomPaneHeight,
-        "width": zoomPaneWidth,
-        "x" : greenZoomPaneX,
-        "y" : greenZoomPaneY
-        });
-      d3.select("#clipGreenFrame")
-        .attr({
-        "height": zoomPaneHeight,
-        "width": zoomPaneWidth,
-        "x" : greenZoomPaneX,
-        "y" : greenZoomPaneY,
-        "fill-opacity": 0,
-        "fill": "gray",
-        "stroke": "green",
-        "stroke-width": imagePadding,
-        "stroke-opacity": 0.5
-        });
+              var greenImage = d3.select("#greenImage")
+                .attr("xlink:href", greenImage.src)
+                .attr({
+                "height": rgbImage.naturalHeight,
+                "width": rgbImage.naturalWidth,
+                "x" : 0,
+                "y" : 0
+                });
+        //blue pane
+                d3.select("#clipBlue")
+                  .attr({
+                  "height": zoomPaneHeight,
+                  "width": zoomPaneWidth,
+                  "x" : blueZoomPaneX,
+                  "y" : blueZoomPaneY
+                  });
+                d3.select("#clipBlueFrame")
+                  .attr({
+                  "height": zoomPaneHeight,
+                  "width": zoomPaneWidth,
+                  "x" : blueZoomPaneX,
+                  "y" : blueZoomPaneY,
+                  "fill-opacity": 0,
+                  "fill": "gray",
+                  "stroke": "blue",
+                  "stroke-width": imagePadding,
+                  "stroke-opacity": 0.5
+                  });
 
-      var greenImage = d3.select("#greenImage")
-        .attr("xlink:href", imageFolder+greenImageFileName)
-        .attr({
-        "height": img.naturalHeight,
-        "width": img.naturalWidth,
-        "x" : 0,
-        "y" : 0
-        });
-//blue pane
-        d3.select("#clipBlue")
-          .attr({
-          "height": zoomPaneHeight,
-          "width": zoomPaneWidth,
-          "x" : blueZoomPaneX,
-          "y" : blueZoomPaneY
+                var blueImage = d3.select("#blueImage")
+                  .attr("xlink:href", blueImage.src)
+                  .attr({
+                  "height": rgbImage.naturalHeight,
+                  "width": rgbImage.naturalWidth,
+                  "x" : 0,
+                  "y" : 0
+                  });
+
+        //gray pane
+              d3.select("#clipGray")
+                .attr({
+                "height": zoomPaneHeight,
+                "width": zoomPaneWidth,
+                "x" : grayZoomPaneX,
+                "y" : grayZoomPaneY
+                });
+              d3.select("#clipGrayFrame")
+                .attr({
+                "height": zoomPaneHeight,
+                "width": zoomPaneWidth,
+                "x" : grayZoomPaneX,
+                "y" : grayZoomPaneY,
+                "fill-opacity": 0,
+                "fill": "gray",
+                "stroke": "gray",
+                "stroke-width": imagePadding,
+                "stroke-opacity": 0.5
+                });
+
+              var grayImage = d3.select("#grayImage")
+                .attr("xlink:href", grayImage.src)
+                .attr({
+                "height": rgbImage.naturalHeight,
+                "width": rgbImage.naturalWidth,
+                "x" : 0,
+                "y" : 0
+                });
+
+            var svg = d3.select("body").select("svg")
+                  .attr("width", svgWidth)
+                  .attr("height", svgHeight);
+
+            //add scale bar
+            var scaleBarWidth = Math.floor((scaleBarSize*micronPixelRatio)*(rgbWidth/rgbImage.naturalWidth));
+            console.log("width to natural width: "+rgbWidth/rgbImage.naturalWidth);
+            console.log("Natural width: "+rgbImage.naturalWidth);
+            console.log("microns to pixels: "+scaleBarSize*micronPixelRatio);
+            console.log("Scale bar width: "+scaleBarWidth);
+            svg.append("rect")
+                .attr("x", scaleBarX)
+                .attr("y", scaleBarY)
+                .attr("height", scaleBarHeight)
+                .attr("width", scaleBarWidth)
+                .attr("fill-opacity", 0.9)
+                .attr("fill", "lightgray")
+                .attr("stroke","lightgray")
+                .attr("stroke-width",0)
+                .attr("stroke-opacity",0.9);
+
+            //resizable zoom rectangle code begin
+
+              var width = 100,
+                  height = 100,
+                  rectStrokeWidth = 3,
+                  dragBarWidth = 10;
+
+              var drag = d3.behavior.drag()
+                  .origin(Object)
+                  .on("drag", dragmove);
+
+              var dragright = d3.behavior.drag()
+                  .origin(Object)
+                  .on("drag", rdragresize);
+
+              var dragleft = d3.behavior.drag()
+                  .origin(Object)
+                  .on("drag", ldragresize);
+
+              var dragtop = d3.behavior.drag()
+                  .origin(Object)
+                  .on("drag", tdragresize);
+
+              var dragbottom = d3.behavior.drag()
+                  .origin(Object)
+                  .on("drag", bdragresize);
+
+              var bigRGBImageHandle = svg.select("#bigRGBImageGroup").append("g")
+                    .data([{x: width / 2, y: height / 2}]);
+
+              var dragrect = bigRGBImageHandle.append("rect")
+                    .attr("id", "active")
+                    .attr("x", function(d) { return d.x; })
+                    .attr("y", function(d) { return d.y; })
+                    .attr("height", height)
+                    .attr("width", width)
+                    .attr("fill-opacity", 0)
+                    .attr("cursor", "move")
+                    .attr("fill", "lightgray")
+                    .attr("stroke","lightgray")
+                    .attr("stroke-width",rectStrokeWidth)
+                    .attr("stroke-opacity",0.7)
+                    .call(drag);
+
+              var dragbarleft = bigRGBImageHandle.append("rect")
+                    .attr("x", function(d) { return d.x - (dragBarWidth/2); })
+                    .attr("y", function(d) { return d.y + (dragBarWidth/2); })
+                    .attr("height", height - dragBarWidth)
+                    .attr("id", "dragleft")
+                    .attr("width", dragBarWidth)
+                    .attr("fill", "gray")
+                    .attr("fill-opacity", 0)
+                    .attr("cursor", "ew-resize")
+                    .call(dragleft);
+
+              var dragbarright = bigRGBImageHandle.append("rect")
+                    .attr("x", function(d) { return d.x + width - (dragBarWidth/2); })
+                    .attr("y", function(d) { return d.y + (dragBarWidth/2); })
+                    .attr("id", "dragright")
+                    .attr("height", height - dragBarWidth)
+                    .attr("width", dragBarWidth)
+                    .attr("fill", "gray")
+                    .attr("fill-opacity", 0)
+                    .attr("cursor", "ew-resize")
+                    .call(dragright);
+
+              var dragbartop = bigRGBImageHandle.append("rect")
+                    .attr("x", function(d) { return d.x + (dragBarWidth/2); })
+                    .attr("y", function(d) { return d.y - (dragBarWidth/2); })
+                    .attr("height", dragBarWidth)
+                    .attr("id", "dragleft")
+                    .attr("width", width - dragBarWidth)
+                    .attr("fill", "gray")
+                    .attr("fill-opacity", 0)
+                    .attr("cursor", "ns-resize")
+                    .call(dragtop);
+
+              var dragbarbottom = bigRGBImageHandle.append("rect")
+                    .attr("x", function(d) { return d.x + (dragBarWidth/2); })
+                    .attr("y", function(d) { return d.y + height - (dragBarWidth/2); })
+                    .attr("id", "dragright")
+                    .attr("height", dragBarWidth)
+                    .attr("width", width - dragBarWidth)
+                    .attr("fill", "gray")
+                    .attr("fill-opacity", 0)
+                    .attr("cursor", "ns-resize")
+                    .call(dragbottom);
+
+              //adding scale bar text
+
+              function zoomToImageCoordinate(zoomX,naturalWidth,rgbWidth,paneX){
+                    var zoomImageZero = paneX - Math.ceil(zoomX*(naturalWidth/rgbWidth));
+                    return zoomImageZero;
+              }
+              function zoomScaleNaturalSize(naturalWidth, zoomWidth, rgbWidth){
+                    return  Math.ceil(naturalWidth*((rgbWidth/zoomWidth)*(rgbWidth/naturalWidth)));
+              }
+              //var rgbPanel = d3.select
+
+              function dragmove(d) {
+
+                    dragrect
+                        .attr("x", d.x = Math.max(rgbX, Math.min(rgbWidth + rgbX - width, d3.event.x)))
+                    dragbarleft
+                        .attr("x", function(d) { return d.x - (dragBarWidth/2); })
+                    dragbarright
+                        .attr("x", function(d) { return d.x + width - (dragBarWidth/2); })
+                    dragbartop
+                        .attr("x", function(d) { return d.x + (dragBarWidth/2); })
+                    dragbarbottom
+                        .attr("x", function(d) { return d.x + (dragBarWidth/2); })
+
+
+                    dragrect
+                        .attr("y", d.y = Math.max(rgbY, Math.min(rgbHeight + rgbY - height, d3.event.y)));
+                    dragbarleft
+                        .attr("y", function(d) { return d.y + (dragBarWidth/2); });
+                    dragbarright
+                        .attr("y", function(d) { return d.y + (dragBarWidth/2); });
+                    dragbartop
+                        .attr("y", function(d) { return d.y - (dragBarWidth/2); });
+                    dragbarbottom
+                        .attr("y", function(d) { return d.y + height - (dragBarWidth/2); });
+
+                    //change clipping mask
+                    clipRGBImage
+                      .attr("width", zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth))
+                      .attr("height", zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight))
+                      .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth),rgbWidth,rgbZoomPaneX))
+                      .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight),rgbHeight,rgbZoomPaneY));
+                    redImage
+                      .attr("width", zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth))
+                      .attr("height", zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight))
+                      .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth),rgbWidth,redZoomPaneX))
+                      .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight),rgbHeight,redZoomPaneY));
+                    greenImage
+                      .attr("width", zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth))
+                      .attr("height", zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight))
+                      .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth),rgbWidth,greenZoomPaneX))
+                      .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight),rgbHeight,greenZoomPaneY));
+                    blueImage
+                      .attr("width", zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth))
+                      .attr("height", zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight))
+                      .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth),rgbWidth,blueZoomPaneX))
+                      .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight),rgbHeight,blueZoomPaneY));
+                    grayImage
+                      .attr("width", zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth))
+                      .attr("height", zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight))
+                      .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth),rgbWidth,grayZoomPaneX))
+                      .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight),rgbHeight,grayZoomPaneY));
+
+              }
+
+              function ldragresize(d) {
+
+                    var oldx = d.x;
+                   //Max x on the right is x + width - dragBarWidth
+                   //Max x on the left is 0 - (dragBarWidth/2)
+                    d.x = Math.max(0, Math.min(d.x + width - (dragBarWidth / 2), d3.event.x));
+                    width = width + (oldx - d.x);
+                    //adding this for symetrical resize
+                    height = width;
+
+                    dragbarleft
+                      .attr("x", function(d) { return d.x - (dragBarWidth / 2); });
+
+                    dragrect
+                      .attr("x", function(d) { return d.x; })
+                      .attr("width", width)
+                      .attr("height", height);
+
+                   dragbartop
+                      .attr("x", function(d) { return d.x + (dragBarWidth/2); })
+                      .attr("width", width - dragBarWidth)
+                      .attr("height", height - dragBarWidth);
+                   dragbarbottom
+                      .attr("x", function(d) { return d.x + (dragBarWidth/2); })
+                      .attr("width", width - dragBarWidth)
+                      //added for symetrical resize
+                      .attr("height", height - dragBarWidth)
+
+              }
+
+              function rdragresize(d) {
+                   //Max x on the left is x - width
+                   //Max x on the right is width of screen + (dragBarWidth/2)
+                   var dragx = Math.max(d.x + (dragBarWidth/2), Math.min(rgbWidth, d.x + width + d3.event.dx));
+
+                   //recalculate width
+                   width = dragx - d.x;
+                   //adding this for symetrical resize
+                   height = width;
+                   //move the right drag handle
+                   dragbarright
+                      .attr("x", function(d) { return dragx - (dragBarWidth/2) });
+
+                   //resize the drag rectangle
+                   //as we are only resizing from the right, the x coordinate does not need to change
+                   dragrect
+                      .attr("width", width)
+                      .attr("height", height);
+                   dragbartop
+                      .attr("width", width - dragBarWidth)
+                      .attr("height", height - dragBarWidth);
+                   dragbarbottom
+                      .attr("width", width - dragBarWidth)
+                      .attr("height", height - dragBarWidth)
+              }
+
+              function tdragresize(d) {
+                    var oldy = d.y;
+                   //Max x on the right is x + width - dragBarWidth
+                   //Max x on the left is 0 - (dragBarWidth/2)
+                    d.y = Math.max(0, Math.min(d.y + height - (dragBarWidth / 2), d3.event.y));
+                    height = height + (oldy - d.y);
+                    //adding this for symetrical resize
+                    width = height;
+                    dragbartop
+                      .attr("y", function(d) { return d.y - (dragBarWidth / 2); });
+
+                    dragrect
+                      .attr("y", function(d) { return d.y; })
+                      .attr("height", height)
+                      .attr("width", width);
+
+                    dragbarleft
+                      .attr("y", function(d) { return d.y + (dragBarWidth/2); })
+                      .attr("height", height - dragBarWidth)
+                      .attr("width", width - dragBarWidth);
+                    dragbarright
+                      .attr("y", function(d) { return d.y + (dragBarWidth/2); })
+                      .attr("height", height - dragBarWidth)
+                      .attr("width", width - dragBarWidth);
+              }
+
+              function bdragresize(d) {
+                   //Max x on the left is x - width
+                   //Max x on the right is width of screen + (dragBarWidth/2)
+                   var dragy = Math.max(d.y + (dragBarWidth/2), Math.min(rgbHeight, d.y + height + d3.event.dy));
+
+                   //recalculate width
+                   height = dragy - d.y;
+                   //adding this for symetrical resize
+                   width = height;
+                   //move the right drag handle
+                   dragbarbottom
+                      .attr("y", function(d) { return dragy - (dragBarWidth/2) });
+
+                   //resize the drag rectangle
+                   //as we are only resizing from the right, the x coordinate does not need to change
+                   dragrect
+                      .attr("height", height)
+                      .attr("width", width);
+                   dragbarleft
+                      .attr("height", height - dragBarWidth);
+                   dragbarright
+                      .attr("height", height - dragBarWidth)
+                      .attr("width", width - dragBarWidth);
+          }
+      }
+    //resizable zoom rectangle code end
+
+    //prealod all images before starting
+    var rgbImage = new Image();
+    rgbImage.src = imageFolder+rgbImageFileName;
+    rgbImage.addEventListener("load", function() {
+      console.log("rgb image loaded "+rgbImage.src);
+      var redImage = new Image();
+      redImage.src = imageFolder+redImageFileName;
+      redImage.addEventListener("load", function() {
+        console.log("red image loaded "+redImage.src);
+        var greenImage = new Image();
+        greenImage.src = imageFolder+greenImageFileName;
+        greenImage.addEventListener("load", function() {
+          console.log("green image loaded "+greenImage.src);
+          var blueImage = new Image();
+          blueImage.src = imageFolder+blueImageFileName;
+          blueImage.addEventListener("load", function() {
+            console.log("blue image loaded "+blueImage.src);
+            var grayImage = new Image();
+            grayImage.src = imageFolder+grayImageFileName;
+            grayImage.addEventListener("load", function() {
+              console.log("gray image loaded "+grayImage.src);
+              mainSVG(rgbImage, redImage, greenImage, blueImage, grayImage);
+            });
           });
-        d3.select("#clipBlueFrame")
-          .attr({
-          "height": zoomPaneHeight,
-          "width": zoomPaneWidth,
-          "x" : blueZoomPaneX,
-          "y" : blueZoomPaneY,
-          "fill-opacity": 0,
-          "fill": "gray",
-          "stroke": "blue",
-          "stroke-width": imagePadding,
-          "stroke-opacity": 0.5
-          });
-
-        var blueImage = d3.select("#blueImage")
-          .attr("xlink:href", imageFolder+blueImageFileName)
-          .attr({
-          "height": img.naturalHeight,
-          "width": img.naturalWidth,
-          "x" : 0,
-          "y" : 0
-          });
-
-//gray pane
-      d3.select("#clipGray")
-        .attr({
-        "height": zoomPaneHeight,
-        "width": zoomPaneWidth,
-        "x" : grayZoomPaneX,
-        "y" : grayZoomPaneY
         });
-      d3.select("#clipGrayFrame")
-        .attr({
-        "height": zoomPaneHeight,
-        "width": zoomPaneWidth,
-        "x" : grayZoomPaneX,
-        "y" : grayZoomPaneY,
-        "fill-opacity": 0,
-        "fill": "gray",
-        "stroke": "gray",
-        "stroke-width": imagePadding,
-        "stroke-opacity": 0.5
-        });
+      });
+    });
 
-      var grayImage = d3.select("#grayImage")
-        .attr("xlink:href", imageFolder+grayImageFileName)
-        .attr({
-        "height": img.naturalHeight,
-        "width": img.naturalWidth,
-        "x" : 0,
-        "y" : 0
-        });
-
-    var svg = d3.select("body").select("svg")
-          .attr("width", svgWidth)
-          .attr("height", svgHeight);
-
-    //resizable zoom rectangle code begin
-
-      var width = 100,
-          height = 100,
-          rectStrokeWidth = 5,
-          dragBarWidth = 15;
-
-      var drag = d3.behavior.drag()
-          .origin(Object)
-          .on("drag", dragmove);
-
-      var dragright = d3.behavior.drag()
-          .origin(Object)
-          .on("drag", rdragresize);
-
-      var dragleft = d3.behavior.drag()
-          .origin(Object)
-          .on("drag", ldragresize);
-
-      var dragtop = d3.behavior.drag()
-          .origin(Object)
-          .on("drag", tdragresize);
-
-      var dragbottom = d3.behavior.drag()
-          .origin(Object)
-          .on("drag", bdragresize);
-
-      var bigRGBImageHandle = svg.select("#bigRGBImageGroup").append("g")
-            .data([{x: width / 2, y: height / 2}]);
-
-      var dragrect = bigRGBImageHandle.append("rect")
-            .attr("id", "active")
-            .attr("x", function(d) { return d.x; })
-            .attr("y", function(d) { return d.y; })
-            .attr("height", height)
-            .attr("width", width)
-            .attr("fill-opacity", 0)
-            .attr("cursor", "move")
-            .attr("fill", "lightgray")
-            .attr("stroke","lightgray")
-            .attr("stroke-width",rectStrokeWidth)
-            .attr("stroke-opacity",0.7)
-            .call(drag);
-
-      var dragbarleft = bigRGBImageHandle.append("rect")
-            .attr("x", function(d) { return d.x - (dragBarWidth/2); })
-            .attr("y", function(d) { return d.y + (dragBarWidth/2); })
-            .attr("height", height - dragBarWidth)
-            .attr("id", "dragleft")
-            .attr("width", dragBarWidth)
-            .attr("fill", "gray")
-            .attr("fill-opacity", 0)
-            .attr("cursor", "ew-resize")
-            .call(dragleft);
-
-      var dragbarright = bigRGBImageHandle.append("rect")
-            .attr("x", function(d) { return d.x + width - (dragBarWidth/2); })
-            .attr("y", function(d) { return d.y + (dragBarWidth/2); })
-            .attr("id", "dragright")
-            .attr("height", height - dragBarWidth)
-            .attr("width", dragBarWidth)
-            .attr("fill", "gray")
-            .attr("fill-opacity", 0)
-            .attr("cursor", "ew-resize")
-            .call(dragright);
-
-      var dragbartop = bigRGBImageHandle.append("rect")
-            .attr("x", function(d) { return d.x + (dragBarWidth/2); })
-            .attr("y", function(d) { return d.y - (dragBarWidth/2); })
-            .attr("height", dragBarWidth)
-            .attr("id", "dragleft")
-            .attr("width", width - dragBarWidth)
-            .attr("fill", "gray")
-            .attr("fill-opacity", 0)
-            .attr("cursor", "ns-resize")
-            .call(dragtop);
-
-      var dragbarbottom = bigRGBImageHandle.append("rect")
-            .attr("x", function(d) { return d.x + (dragBarWidth/2); })
-            .attr("y", function(d) { return d.y + height - (dragBarWidth/2); })
-            .attr("id", "dragright")
-            .attr("height", dragBarWidth)
-            .attr("width", width - dragBarWidth)
-            .attr("fill", "gray")
-            .attr("fill-opacity", 0)
-            .attr("cursor", "ns-resize")
-            .call(dragbottom);
-
-      function zoomToImageCoordinate(zoomX,naturalWidth,rgbWidth,paneX){
-            var zoomImageZero = paneX - Math.ceil(zoomX*(naturalWidth/rgbWidth));
-            return zoomImageZero;
-      }
-      function zoomScaleNaturalSize(naturalWidth, zoomWidth, rgbWidth){
-            return  Math.ceil(naturalWidth*((rgbWidth/zoomWidth)*(rgbWidth/naturalWidth)));
-      }
-      //var rgbPanel = d3.select
-
-      function dragmove(d) {
-
-            dragrect
-                .attr("x", d.x = Math.max(rgbX, Math.min(rgbWidth + rgbX - width, d3.event.x)))
-            dragbarleft
-                .attr("x", function(d) { return d.x - (dragBarWidth/2); })
-            dragbarright
-                .attr("x", function(d) { return d.x + width - (dragBarWidth/2); })
-            dragbartop
-                .attr("x", function(d) { return d.x + (dragBarWidth/2); })
-            dragbarbottom
-                .attr("x", function(d) { return d.x + (dragBarWidth/2); })
-
-
-            dragrect
-                .attr("y", d.y = Math.max(rgbY, Math.min(rgbHeight + rgbY - height, d3.event.y)));
-            dragbarleft
-                .attr("y", function(d) { return d.y + (dragBarWidth/2); });
-            dragbarright
-                .attr("y", function(d) { return d.y + (dragBarWidth/2); });
-            dragbartop
-                .attr("y", function(d) { return d.y - (dragBarWidth/2); });
-            dragbarbottom
-                .attr("y", function(d) { return d.y + height - (dragBarWidth/2); });
-
-            //change clipping mask
-            clipRGBImage
-              .attr("width", zoomScaleNaturalSize(img.naturalWidth, width, rgbWidth))
-              .attr("height", zoomScaleNaturalSize(img.naturalHeight, height, rgbHeight))
-              .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(img.naturalWidth, width, rgbWidth),rgbWidth,rgbZoomPaneX))
-              .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(img.naturalHeight, height, rgbHeight),rgbHeight,rgbZoomPaneY));
-            redImage
-              .attr("width", zoomScaleNaturalSize(img.naturalWidth, width, rgbWidth))
-              .attr("height", zoomScaleNaturalSize(img.naturalHeight, height, rgbHeight))
-              .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(img.naturalWidth, width, rgbWidth),rgbWidth,redZoomPaneX))
-              .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(img.naturalHeight, height, rgbHeight),rgbHeight,redZoomPaneY));
-            greenImage
-              .attr("width", zoomScaleNaturalSize(img.naturalWidth, width, rgbWidth))
-              .attr("height", zoomScaleNaturalSize(img.naturalHeight, height, rgbHeight))
-              .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(img.naturalWidth, width, rgbWidth),rgbWidth,greenZoomPaneX))
-              .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(img.naturalHeight, height, rgbHeight),rgbHeight,greenZoomPaneY));
-            blueImage
-              .attr("width", zoomScaleNaturalSize(img.naturalWidth, width, rgbWidth))
-              .attr("height", zoomScaleNaturalSize(img.naturalHeight, height, rgbHeight))
-              .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(img.naturalWidth, width, rgbWidth),rgbWidth,blueZoomPaneX))
-              .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(img.naturalHeight, height, rgbHeight),rgbHeight,blueZoomPaneY));
-            grayImage
-              .attr("width", zoomScaleNaturalSize(img.naturalWidth, width, rgbWidth))
-              .attr("height", zoomScaleNaturalSize(img.naturalHeight, height, rgbHeight))
-              .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(img.naturalWidth, width, rgbWidth),rgbWidth,grayZoomPaneX))
-              .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(img.naturalHeight, height, rgbHeight),rgbHeight,grayZoomPaneY));
-
-      }
-
-      function ldragresize(d) {
-
-            var oldx = d.x;
-           //Max x on the right is x + width - dragBarWidth
-           //Max x on the left is 0 - (dragBarWidth/2)
-            d.x = Math.max(0, Math.min(d.x + width - (dragBarWidth / 2), d3.event.x));
-            width = width + (oldx - d.x);
-            //adding this for symetrical resize
-            height = width;
-
-            dragbarleft
-              .attr("x", function(d) { return d.x - (dragBarWidth / 2); });
-
-            dragrect
-              .attr("x", function(d) { return d.x; })
-              .attr("width", width)
-              .attr("height", height);
-
-           dragbartop
-              .attr("x", function(d) { return d.x + (dragBarWidth/2); })
-              .attr("width", width - dragBarWidth)
-              .attr("height", height - dragBarWidth);
-           dragbarbottom
-              .attr("x", function(d) { return d.x + (dragBarWidth/2); })
-              .attr("width", width - dragBarWidth)
-              //added for symetrical resize
-              .attr("height", height - dragBarWidth)
-
-      }
-
-      function rdragresize(d) {
-           //Max x on the left is x - width
-           //Max x on the right is width of screen + (dragBarWidth/2)
-           var dragx = Math.max(d.x + (dragBarWidth/2), Math.min(rgbWidth, d.x + width + d3.event.dx));
-
-           //recalculate width
-           width = dragx - d.x;
-           //adding this for symetrical resize
-           height = width;
-           //move the right drag handle
-           dragbarright
-              .attr("x", function(d) { return dragx - (dragBarWidth/2) });
-
-           //resize the drag rectangle
-           //as we are only resizing from the right, the x coordinate does not need to change
-           dragrect
-              .attr("width", width)
-              .attr("height", height);
-           dragbartop
-              .attr("width", width - dragBarWidth)
-              .attr("height", height - dragBarWidth);
-           dragbarbottom
-              .attr("width", width - dragBarWidth)
-              .attr("height", height - dragBarWidth)
-      }
-
-      function tdragresize(d) {
-            var oldy = d.y;
-           //Max x on the right is x + width - dragBarWidth
-           //Max x on the left is 0 - (dragBarWidth/2)
-            d.y = Math.max(0, Math.min(d.y + height - (dragBarWidth / 2), d3.event.y));
-            height = height + (oldy - d.y);
-            //adding this for symetrical resize
-            width = height;
-            dragbartop
-              .attr("y", function(d) { return d.y - (dragBarWidth / 2); });
-
-            dragrect
-              .attr("y", function(d) { return d.y; })
-              .attr("height", height)
-              .attr("width", width);
-
-            dragbarleft
-              .attr("y", function(d) { return d.y + (dragBarWidth/2); })
-              .attr("height", height - dragBarWidth)
-              .attr("width", width - dragBarWidth);
-            dragbarright
-              .attr("y", function(d) { return d.y + (dragBarWidth/2); })
-              .attr("height", height - dragBarWidth)
-              .attr("width", width - dragBarWidth);
-      }
-
-      function bdragresize(d) {
-           //Max x on the left is x - width
-           //Max x on the right is width of screen + (dragBarWidth/2)
-           var dragy = Math.max(d.y + (dragBarWidth/2), Math.min(rgbHeight, d.y + height + d3.event.dy));
-
-           //recalculate width
-           height = dragy - d.y;
-           //adding this for symetrical resize
-           width = height;
-           //move the right drag handle
-           dragbarbottom
-              .attr("y", function(d) { return dragy - (dragBarWidth/2) });
-
-           //resize the drag rectangle
-           //as we are only resizing from the right, the x coordinate does not need to change
-           dragrect
-              .attr("height", height)
-              .attr("width", width);
-           dragbarleft
-              .attr("height", height - dragBarWidth);
-           dragbarright
-              .attr("height", height - dragBarWidth)
-              .attr("width", width - dragBarWidth);
-      }
-  //resizable zoom rectangle code end
   }
-  function saveImage(){
-    //var url = imageFolder+"D06-D05-D04_Maximum-0002.svg";
+  function saveSVGImage(){
     console.log("Button Pressed");
 
     var html = d3.select("body").select("svg")
@@ -539,9 +593,8 @@ NB: relies on a working internet connection for the libraries.
         .html("Click here to download svg file")
         .attr("href", "data:image/svg+xml;base64,"+ btoa(html))
         .attr("download", "svg_figure");
-    //svg.attr("src", url);
-    //Plotly.toImage(gd,{format:'svg',height:800,width:800});
   }
+
   </script>
 
 
@@ -612,9 +665,9 @@ NB: relies on a working internet connection for the libraries.
     <br><br>
         <input name="saveButton"
            type="button"
-           value="Save Image"
-           onclick="saveImage()" />
-           <p>Todo:<br>-Fix double zoom bug<br>-Save PDF from svg<br>-Scale bar<br>-Responsive Grid</p>
+           value="Save SVG Image"
+           onclick="saveSVGImage()" />
+           <p>Todo:<br>-Fix double zoom bug<br>-Scale bar<br>-Responsive Grid</p>
   </div>
 </body>
 </html>
