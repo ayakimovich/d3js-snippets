@@ -287,6 +287,15 @@ NB: relies on a working internet connection for the libraries.
                 .attr("stroke-width",0)
                 .attr("stroke-opacity",0.9);
 
+            svg.append("text")
+                .attr("x", scaleBarX+scaleBarWidth/2-25)
+                .attr("y", scaleBarY-scaleBarHeight-imagePadding)
+                .attr("font-family", "sans-serif")
+                .attr("font-size", 20)
+                .attr("fill", "lightgray")
+                .attr("fill-opacity", 0.9)
+                .text(scaleBarSize+" µm");
+
             //resizable zoom rectangle code begin
 
               var width = 100,
