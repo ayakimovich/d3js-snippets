@@ -1,7 +1,7 @@
 <!doctype html>
 <!--
 uViewer
-Copyright (c) Artur Yakimovich, PhD 2016.
+Copyright (c) Artur Yakimovich, PhD, 2016-2017.
 HTML5, JavaScript, D3 based Figure viewer for high definition microscopy images.
 MIT License.
 NB: relies on a working internet connection for the libraries.
@@ -390,8 +390,11 @@ NB: relies on a working internet connection for the libraries.
                     var zoomImageZero = paneX - Math.ceil(zoomX*(naturalWidth/rgbWidth));
                     return zoomImageZero;
               }
-              function zoomScaleNaturalSize(naturalWidth, zoomWidth, rgbWidth){
-                    return  Math.ceil(naturalWidth*((rgbWidth/zoomWidth)*(rgbWidth/naturalWidth)));
+              function zoomScaleNaturalSize(naturalWidth, zoomWidth, rgbWidth, zoomPaneWidth){
+                    //return  Math.ceil(naturalWidth*((rgbWidth/zoomWidth)*(rgbWidth/naturalWidth)));
+                    //return  Math.ceil(naturalWidth*(rgbWidth/zoomWidth)*(rgbWidth/naturalWidth));
+                    //return  Math.ceil(naturalWidth*(rgbWidth/zoomWidth));
+                    return  Math.ceil(rgbWidth*(rgbWidth/zoomWidth)*(zoomPaneWidth/rgbWidth));
               }
               //var rgbPanel = d3.select
 
@@ -422,30 +425,30 @@ NB: relies on a working internet connection for the libraries.
 
                     //change clipping mask
                     clipRGBImage
-                      .attr("width", zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth))
-                      .attr("height", zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight))
-                      .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth),rgbWidth,rgbZoomPaneX))
-                      .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight),rgbHeight,rgbZoomPaneY));
+                      .attr("width", zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth, rgbZoomPaneWidth))
+                      .attr("height", zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight, rgbZoomPaneHeight))
+                      .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth, rgbZoomPaneWidth),rgbWidth,rgbZoomPaneX))
+                      .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight, rgbZoomPaneWidth),rgbHeight,rgbZoomPaneY));
                     redImage
-                      .attr("width", zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth))
-                      .attr("height", zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight))
-                      .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth),rgbWidth,redZoomPaneX))
-                      .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight),rgbHeight,redZoomPaneY));
+                      .attr("width", zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth, zoomPaneWidth))
+                      .attr("height", zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight, zoomPaneHeight))
+                      .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth, zoomPaneWidth),rgbWidth,redZoomPaneX))
+                      .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight, zoomPaneWidth),rgbHeight,redZoomPaneY));
                     greenImage
-                      .attr("width", zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth))
-                      .attr("height", zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight))
-                      .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth),rgbWidth,greenZoomPaneX))
-                      .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight),rgbHeight,greenZoomPaneY));
+                      .attr("width", zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth, zoomPaneWidth))
+                      .attr("height", zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight, zoomPaneHeight))
+                      .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth, zoomPaneWidth),rgbWidth,greenZoomPaneX))
+                      .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight, zoomPaneWidth),rgbHeight,greenZoomPaneY));
                     blueImage
-                      .attr("width", zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth))
-                      .attr("height", zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight))
-                      .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth),rgbWidth,blueZoomPaneX))
-                      .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight),rgbHeight,blueZoomPaneY));
+                      .attr("width", zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth, zoomPaneWidth))
+                      .attr("height", zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight, zoomPaneHeight))
+                      .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth, zoomPaneWidth),rgbWidth,blueZoomPaneX))
+                      .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight, zoomPaneWidth),rgbHeight,blueZoomPaneY));
                     grayImage
-                      .attr("width", zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth))
-                      .attr("height", zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight))
-                      .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth),rgbWidth,grayZoomPaneX))
-                      .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight),rgbHeight,grayZoomPaneY));
+                      .attr("width", zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth, zoomPaneWidth))
+                      .attr("height", zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight, zoomPaneHeight))
+                      .attr("x", zoomToImageCoordinate(d.x,zoomScaleNaturalSize(rgbImage.naturalWidth, width, rgbWidth, zoomPaneWidth),rgbWidth,grayZoomPaneX))
+                      .attr("y", zoomToImageCoordinate(d.y,zoomScaleNaturalSize(rgbImage.naturalHeight, height, rgbHeight, zoomPaneWidth),rgbHeight,grayZoomPaneY));
 
               }
 
@@ -676,7 +679,7 @@ NB: relies on a working internet connection for the libraries.
            type="button"
            value="Save SVG Image"
            onclick="saveSVGImage()" />
-           <p>Todo:<br>-Fix double zoom bug<br>-Scale bar<br>-Responsive Grid</p>
+           <p>Todo:<br>-Responsive Grid</p>
   </div>
 </body>
 </html>
